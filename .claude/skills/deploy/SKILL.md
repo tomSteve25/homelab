@@ -13,7 +13,7 @@ SSH into the Odroid at `root@192.168.0.114` and deploy the latest changes.
    `ssh root@192.168.0.114 "cd /root/homelab && git pull origin main"`
 
 2. Run the setup/deploy script:
-   `ssh root@192.168.0.114 "cd /root/homelab && sudo ./setup.sh"`
+   `ssh root@192.168.0.114 "cd /root/homelab && ./setup.sh"`
 
 Report the output of each step. If `git pull` shows "Already up to date", note it but still run setup.sh unless the user says otherwise.
 
