@@ -1,0 +1,7 @@
+# Managed by homelab repo. Edit here, then run setup.sh to apply.
+
+:80 {
+    reverse_proxy localhost:8080 {
+        header_up X-Forwarded-Proto https
+    }
+}

@@ -105,14 +105,8 @@ if [[ ! -f .env ]]; then
     read -rp "Timezone (e.g. America/New_York) [America/New_York]: " tz
     [[ -n "$tz" ]] && sed -i "s|TZ=America/New_York|TZ=$tz|" .env
 
-    read -rp "Cloudflare DNS API token [optional]: " cf_token
-    [[ -n "$cf_token" ]] && sed -i "s|CF_DNS_API_TOKEN=|CF_DNS_API_TOKEN=$cf_token|" .env
-
     read -rp "Cloudflare Tunnel token [optional]: " cf_tunnel
     [[ -n "$cf_tunnel" ]] && sed -i "s|CF_TUNNEL_TOKEN=|CF_TUNNEL_TOKEN=$cf_tunnel|" .env
-
-    read -rp "ACME email for Let's Encrypt [optional]: " acme_email
-    [[ -n "$acme_email" ]] && sed -i "s|ACME_EMAIL=admin@example.com|ACME_EMAIL=$acme_email|" .env
 
     echo ""
     info ".env configured — you can edit it later at: $SCRIPT_DIR/.env"
@@ -125,12 +119,16 @@ info "Creating data directories..."
 mkdir -p services/tailscale-pihole/ts-state
 mkdir -p services/tailscale-pihole/config/pihole
 mkdir -p services/tailscale-pihole/config/dnsmasq
-mkdir -p services/traefik/acme
-mkdir -p services/traefik/certs
 
-# ACME storage needs restrictive permissions
-touch services/traefik/acme/acme.json
-chmod 600 services/traefik/acme/acme.json
+# --- Install Caddyfile ---
+if command -v caddy &>/dev/null; then
+    info "Installing Caddyfile..."
+    cp "$SCRIPT_DIR/Caddyfile" /etc/caddy/Caddyfile
+    systemctl reload caddy || systemctl restart caddy
+    info "Caddy reloaded"
+else
+    warn "Caddy not found — skipping Caddyfile install"
+fi
 
 # --- Launch ---
 info "Pulling images..."

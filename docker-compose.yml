@@ -1,7 +1,3 @@
 include:
   - path: services/tailscale-pihole/compose.yml
-  - path: services/traefik/compose.yml
-
-networks:
-  proxy:
-    name: proxy
+  - path: services/cloudflared/compose.yml
