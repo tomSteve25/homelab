@@ -4,6 +4,8 @@ services:
     container_name: tailscale-pihole
     hostname: pihole
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:8081:80"    # Pi-hole web UI for Caddy
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
