@@ -1,0 +1,38 @@
+services:
+  tailscale-pihole:
+    image: tailscale/tailscale:latest
+    container_name: tailscale-pihole
+    hostname: pihole
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_EXTRA_ARGS=--accept-dns=false --advertise-tags=tag:homelab
+    volumes:
+      - ./ts-state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    healthcheck:
+      test: ["CMD", "tailscale", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
+    restart: unless-stopped
+    network_mode: service:tailscale-pihole
+    depends_on:
+      tailscale-pihole:
+        condition: service_healthy
+    environment:
+      - TZ=${TZ:-America/New_York}
+      - WEBPASSWORD=${PIHOLE_PASSWORD}
+      - DNSMASQ_LISTENING=all
+      - PIHOLE_DNS_=${PIHOLE_UPSTREAM_DNS:-9.9.9.9;149.112.112.112}
+    volumes:
+      - ./config/pihole:/etc/pihole
+      - ./config/dnsmasq:/etc/dnsmasq.d

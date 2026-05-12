@@ -1,0 +1,16 @@
+# Environment
+.env
+
+# Tailscale state
+services/tailscale-pihole/ts-state/
+
+# Pi-hole config (generated at runtime)
+services/tailscale-pihole/config/
+
+# Traefik certs and ACME
+services/traefik/acme/
+services/traefik/certs/
+
+# OS files
+.DS_Store
+Thumbs.db
